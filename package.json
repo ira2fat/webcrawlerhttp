@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "jest": "^30.0.0"
+  },
+  "dependencies": {
+    "jsdom": "^26.1.0"
   }
 }
