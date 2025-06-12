@@ -1,0 +1,27 @@
+{
+  "name": "webcrawlerhttp",
+  "version": "1.0.0",
+  "description": "project to learn http course",
+  "homepage": "https://github.com/ira2fat/webcrawlerhttp#readme",
+  "bugs": {
+    "url": "https://github.com/ira2fat/webcrawlerhttp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ira2fat/webcrawlerhttp.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0"
+  }
+}
