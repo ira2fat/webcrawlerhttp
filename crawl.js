@@ -1,6 +1,32 @@
 const { url } = require('inspector');
 const { JSDOM } = require('jsdom');
 
+
+async function crawlPage(url) {
+
+    console.log(`Crawling page: ${url}`);
+    try {
+        const resp = await fetch(url);
+
+        if (resp.status > 399) {
+            console.error(`Error fetching URL: ${url}, Status: ${resp.status}`);
+            return;
+        }
+        const contentType = resp.headers.get('content-type');
+
+        if ( !contentType.includes('text/html')) {
+            console.error(`No html response URL: ${url}`);
+            return;
+        }
+        console.log(`Response text: ${ await resp.text()}`);
+    } 
+    catch (error) {
+        console.error(`Error fetching URL: ${url}`, error);
+
+    }
+    
+}
+
 function getURLFromHTML(htmlbody, baseUrl) {
 const urls = [];
 const dom = new JSDOM(htmlbody );
@@ -49,5 +75,6 @@ function normalizeUrl(urlStr) {
 
 module.exports = {
   normalizeUrl,
-  getURLFromHTML
+  getURLFromHTML,
+  crawlPage
 };
