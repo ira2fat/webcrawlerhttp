@@ -2,29 +2,51 @@ const { url } = require('inspector');
 const { JSDOM } = require('jsdom');
 
 
-async function crawlPage(url) {
+async function crawlPage(baseUrl, currentUrl, pages) {
 
-    console.log(`Crawling page: ${url}`);
+    const baseUrlObj = new URL(baseUrl);
+    const currentUrlObj = new URL(currentUrl);
+
+    if (currentUrlObj.hostname !== baseUrlObj.hostname) {
+        return pages
+    }
+    const normalizedUrl = normalizeUrl(currentUrl);
+
+    if (pages[normalizedUrl]) {		
+        pages[normalizedUrl].count++;
+        return pages;
+    }
+
+    pages[normalizedUrl] = { count: 1 };
+
+    console.log(`Crawling page: ${currentUrl}`);
+
+    
     try {
-        const resp = await fetch(url);
+        const resp = await fetch(currentUrl);
 
         if (resp.status > 399) {
-            console.error(`Error fetching URL: ${url}, Status: ${resp.status}`);
-            return;
+            console.error(`Error fetching URL: ${currentUrl}, Status: ${resp.status}`);
+            return pages;
         }
         const contentType = resp.headers.get('content-type');
 
         if ( !contentType.includes('text/html')) {
-            console.error(`No html response URL: ${url}`);
-            return;
+            console.error(`No html response URL: ${currentUrl}`);
+            return pages;
         }
-        console.log(`Response text: ${ await resp.text()}`);
+        const htmlBody = await resp.text();
+        const urls = getURLFromHTML(htmlBody, baseUrl);
+
+        for (const url of urls) {
+           pages = await crawlPage(baseUrl, url, pages);
+        }
     } 
     catch (error) {
-        console.error(`Error fetching URL: ${url}`, error);
+        console.error(`Error fetching URL: ${currentUrl}`, error);
 
     }
-    
+    return pages;
 }
 
 function getURLFromHTML(htmlbody, baseUrl) {
